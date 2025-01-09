@@ -1,3 +1,7 @@
+# RSS aggregator
+
+[View the site here](https://frontend-project-11-omega-dusky.vercel.app/)
+
 ### Hexlet tests and linter status:
 
 [![Actions Status](https://github.com/KindProgrammer/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/KindProgrammer/frontend-project-11/actions)
