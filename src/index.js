@@ -1,12 +1,22 @@
-import { object, string, url } from 'yup';
-import './scss/styles.scss';
-import * as bootstrap from 'bootstrap';
+import { object, string, setLocale } from 'yup';
+import './scss/styles.scss'
+import * as bootstrap from 'bootstrap'
 import { formState } from './state.js';
+import i18next from 'i18next';
+import lang from "./assets/lang.json"
 
 const feedList = [];
 
-const schema = object({
-  link: string().url('Некорректный URL').test('is-unique', (d) => `${d.value} уже есть в списке источников`, (value) => !feedList.includes(value)),
+i18next.init({
+    lng: 'en',
+    debug: true,
+    resources: lang
+});
+
+const schema = object().shape({
+    link: string()
+        .url('invalid_url')
+        .test('is-unique', (d) => 'rss_already_added', (value) => !feedList.includes(value))
 });
 
 const applyRss = (event) => {
