@@ -1,39 +1,61 @@
 import { object, string, setLocale } from 'yup';
+import i18next from 'i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
+
 import './scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import { formState } from './state.js';
-import i18next from 'i18next';
-import lang from "./assets/lang.json"
+
+import en from "./assets/lang/en.json"
+import ru from "./assets/lang/ru.json"
 
 const feedList = [];
 
-i18next.init({
-    lng: 'en',
+const app = () => {
+  i18next.use(LanguageDetector).init({
+    supportedLngs: ['ru', 'en'],
+    fallbackLng: 'en',
     debug: true,
-    resources: lang
-});
+    resources: {
+      en: {
+        translation: en
+      },
+      ru: {
+        translation: ru
+      }
+    }
+  });
 
-const schema = object().shape({
-    link: string()
-        .url('invalid_url')
-        .test('is-unique', (d) => 'rss_already_added', (value) => !feedList.includes(value))
-});
+  setLocale({
+    string: {
+      url: () => 'invalid_url'
+    }
+  });
 
-const applyRss = (event) => {
-  event.preventDefault();
-  const inputData = document.getElementById('rssLinkInput').value;
+  const schema = object().shape({
+      link: string()
+          .url()
+          .test('is-unique', (d) => 'rss_already_added', (value) => !feedList.includes(value))
+  });
 
-  schema.validate({ link: inputData })
-    .then((result) => {
-      formState.error = '';
-      feedList.push(result.link);
+  const applyRss = (event) => {
+    event.preventDefault();
+    const inputData = document.getElementById('rssLinkInput').value;
 
-      console.log(feedList);
-    })
-    .catch((error) => { formState.error = error.message; });
+    schema.validate({ link: inputData })
+      .then((result) => {
+        formState.error = '';
+        feedList.push(result.link);
 
-  return false;
-};
+        console.log(feedList);
+      })
+      .catch((error) => { formState.error = error.message; });
 
-const form = document.getElementById('add_rss_form');
-form.addEventListener('submit', applyRss);
+    return false;
+  };
+
+  const form = document.getElementById('add_rss_form');
+  form.addEventListener('submit', applyRss);
+}
+
+app();
