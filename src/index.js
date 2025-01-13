@@ -2,8 +2,8 @@ import { object, string, setLocale } from 'yup';
 import i18next from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import { initializeFormState } from './formView.js'
 import './scss/styles.scss'
-import { initializeForm } from './formView.js';
 
 import en from './assets/lang/en.json';
 import ru from './assets/lang/ru.json';
@@ -38,7 +38,9 @@ const app = () => {
       .test('is-unique', () => 'rss_already_added', (value) => !appState.feedList.includes(value))
   });
 
-  const [form, formState] = initializeForm({ error: '' }, 'add_rss_form');
+  const form = document.getElementById('add_rss_form')
+  const formState = initializeFormState({ error: '' }, form);
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
