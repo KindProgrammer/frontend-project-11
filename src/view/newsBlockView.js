@@ -1,4 +1,16 @@
+import i18next from 'i18next';
 import onChange from 'on-change';
+import modal from 'bootstrap';
+
+const visitedItemsState = onChange({}, (path, value) => {
+  const itemElement = document.getElementById(path);
+  const itemLinkElement = itemElement.getElementsByTagName('a')[0];
+
+  if (value) {
+    itemLinkElement.classList.remove('fw-bold');
+    itemLinkElement.classList.add('fw-normal');
+  }
+});
 
 const createFeedElement = (id, title, description) => {
   const feedElement = document.createElement('div');
@@ -16,14 +28,53 @@ const createFeedElement = (id, title, description) => {
   return feedElement;
 };
 
+const updateModal = (item) => {
+  const rssModalHeaderElement = document.getElementById('rssItemModalLabel');
+  rssModalHeaderElement.innerText = item.title;
+
+  const rssModalItemContent = document.getElementById('rssItemModalContent');
+  rssModalItemContent.innerText = item.description;
+
+  const rssModalItemOpenButton = document.getElementById('rssModalItemOpenButton');
+  rssModalItemOpenButton.innerText = i18next.t('label.open_full');
+  rssModalItemOpenButton.target = '_blank';
+  rssModalItemOpenButton.rel = 'noopener noreferrer';
+  rssModalItemOpenButton.href = item.link;
+};
+
 const createFeedItemElement = (item) => {
   const itemElement = document.createElement('div');
   itemElement.id = item.guid;
 
-  itemElement.innerHTML = `
-    <a target="_blank" rel="noopener noreferrer" class="fw-bold" href="${item.link}">${item.title}</a>
-    <p class="fw-lighter fst-italic">${item.description}</p>
-  `;
+  const itemLinkElement = document.createElement('a');
+  itemLinkElement.href = item.link;
+  itemLinkElement.innerText = item.title;
+  itemLinkElement.target = '_blank';
+  itemLinkElement.rel = 'noopener noreferrer';
+  itemLinkElement.classList.add('fw-bold');
+
+  const previewButton = document.createElement('button');
+  previewButton.classList.add('btn', 'btn-outline-primary');
+  previewButton.innerText = i18next.t('label.preview_button');
+  previewButton.setAttribute('data-bs-toggle', 'modal');
+  previewButton.setAttribute('data-bs-target', '#rssItemModal');
+  previewButton.addEventListener('click', () => {
+    visitedItemsState[item.guid] = true;
+    updateModal(item);
+  });
+
+  const itemDescriptionElement = document.createElement('p');
+  itemDescriptionElement.classList.add('fw-lighter', 'fst-italic');
+  itemDescriptionElement.innerText = item.description;
+
+  const itemLinkContainer = document.createElement('div');
+  itemLinkContainer.classList.add('item-link-container');
+
+  itemLinkContainer.appendChild(itemLinkElement);
+  itemLinkContainer.appendChild(previewButton);
+
+  itemElement.appendChild(itemLinkContainer);
+  itemElement.appendChild(itemDescriptionElement);
 
   return itemElement;
 };
@@ -38,7 +89,7 @@ const updateFeedItems = (feedItems, feedElement) => {
 
   const sortedItems = [...feedItems].sort(compareItems);
 
-  // И рендерим в начало родительского блока,
+  // И рендерим их поочередно в начало родительского блока,
   // таким образом старые сползут в конец и в начале будут новые
   sortedItems.forEach((item) => {
     if (!document.getElementById(item.guid)) {
@@ -58,7 +109,7 @@ const updateFeed = (feedUrl, feed, newsBlock) => {
   updateFeedItems(feed.items, feedElement);
 };
 
-export const initializeNewsBlock = (newsBlock) => {
+const initializeNewsBlock = (newsBlock) => {
   const initialState = {};
 
   return onChange(initialState, (path, value) => {
@@ -72,3 +123,5 @@ export const initializeNewsBlock = (newsBlock) => {
     }
   });
 };
+
+export default initializeNewsBlock;

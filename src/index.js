@@ -8,8 +8,8 @@ import en from './assets/lang/en.json';
 import ru from './assets/lang/ru.json';
 
 import getRss from './api/getRss.js';
-import { initializeForm } from './view/formView.js';
-import { initializeNewsBlock } from './view/newsBlockView.js';
+import initializeForm from './view/formView.js';
+import initializeNewsBlock from './view/newsBlockView.js';
 
 const launchUpdatingRss = (newsState) => {
   const updateAfterDelay = (promiseChain) => {
@@ -74,12 +74,12 @@ const app = () => {
     schema.validate({ link: inputData })
       .then((result) => {
         formState.error = '';
-        return getRss(result.link).then((channel) => newsState[result.link] = channel);
+        return getRss(result.link).then((channel) => { newsState[result.link] = channel; });
       })
       .catch((error) => {
         formState.error = error.message;
       })
-      .finally(() => formState.isLoading = false);
+      .finally(() => { formState.isLoading = false; });
 
     return false;
   });

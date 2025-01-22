@@ -26,7 +26,7 @@ const updateIsLoading = (form, isLoading) => {
   }
 };
 
-export const initializeForm = (form) => {
+const initializeForm = (form) => {
   const initialState = {
     error: '',
     isLoading: false,
@@ -45,3 +45,5 @@ export const initializeForm = (form) => {
     }
   });
 };
+
+export default initializeForm;

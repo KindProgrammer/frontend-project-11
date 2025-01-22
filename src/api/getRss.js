@@ -5,10 +5,13 @@ const DOM_PARSER = new DOMParser();
 const getTextFromTag = (tag) => tag.innerHTML.replace('<![CDATA[', '').replace(']]>', '');
 
 const parseRss = (data) => {
-  const rss = DOM_PARSER.parseFromString(data, 'application/xml').getElementsByTagName('rss')[0];
-  if (!rss) throw new Error('error.no_rss');
+  const rss = DOM_PARSER.parseFromString(data, 'application/xml')
+    .getElementsByTagName('rss')[0];
+  if (!rss) throw new Error('error.no_valid_rss');
 
   const channel = rss.getElementsByTagName('channel')[0];
+  if (!channel) throw new Error('error.no_valid_rss');
+
   const channelTitle = getTextFromTag(channel.getElementsByTagName('title')[0]);
   const channelDescription = getTextFromTag(channel.getElementsByTagName('description')[0]);
 
