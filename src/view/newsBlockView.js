@@ -109,19 +109,15 @@ const updateFeed = (feedUrl, feed, newsBlock) => {
   updateFeedItems(feed.items, feedElement);
 };
 
-const initializeNewsBlock = (newsBlock) => {
-  const initialState = {};
+const initializeNewsBlock = (newsBlock, initialState) => onChange(initialState, (path, value) => {
+  if (path.endsWith('items')) {
+    const feedUrl = path.replace('.items', '');
+    const feedElement = document.getElementById(feedUrl);
 
-  return onChange(initialState, (path, value) => {
-    if (path.endsWith('items')) {
-      const feedUrl = path.replace('.items', '');
-      const feedElement = document.getElementById(feedUrl);
-
-      updateFeedItems(value, feedElement);
-    } else {
-      updateFeed(path, value, newsBlock);
-    }
-  });
-};
+    updateFeedItems(value, feedElement);
+  } else {
+    updateFeed(path, value, newsBlock);
+  }
+});
 
 export default initializeNewsBlock;
