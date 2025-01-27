@@ -6,10 +6,10 @@ const parseRss = (data) => {
   const dom = DOM_PARSER.parseFromString(data, 'text/xml');
 
   const rss = dom.getElementsByTagName('rss')[0];
-  if (!rss) throw new Error('error.no_valid_rss');
+  if (!rss) return null;
 
   const channel = rss.getElementsByTagName('channel')[0];
-  if (!channel) throw new Error('error.no_valid_rss');
+  if (!channel) return null;
 
   const channelTitle = channel.getElementsByTagName('title')[0].childNodes[0].nodeValue;
   const channelDescription = channel.getElementsByTagName('description')[0].childNodes[0].nodeValue;

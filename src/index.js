@@ -70,7 +70,10 @@ const app = () => {
     formState.isLoading = true;
 
     schema.validate({ link: inputData })
-      .then((result) => getRss(result.link).then((channel) => { newsState[result.link] = channel; }))
+      .then((result) => getRss(result.link).then((channel) => { 
+        if (channel) newsState[result.link] = channel;
+        else throw new Error('error.no_valid_rss');
+      }))
       .then(() => { 
         formState.message = { isError: false, textId: 'success' }
       })
