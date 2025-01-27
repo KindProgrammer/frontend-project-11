@@ -76,6 +76,7 @@ const app = () => {
       }))
       .then(() => { 
         formState.message = { isError: false, textId: 'success' }
+        event.target[0].value = '';
       })
       .catch((error) => {
         formState.message = { isError: true, textId: error.message };
