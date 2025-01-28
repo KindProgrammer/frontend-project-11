@@ -12,8 +12,7 @@ const updateForm = (form, message) => {
       inputElement.classList.add('is-invalid');
       messageElement.classList.remove('text-success');
       messageElement.classList.add('text-danger');
-    }
-    else {
+    } else {
       inputElement.classList.remove('is-invalid');
       messageElement.classList.remove('text-danger');
       messageElement.classList.add('text-success');

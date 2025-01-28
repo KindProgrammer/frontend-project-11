@@ -39,9 +39,9 @@ const parseRss = (data) => {
 
 const getRss = (url) => axios
   .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
-  .catch((err) => { 
+  .catch((err) => {
     console.error(err);
-    throw new Error('error.network_error') 
+    throw new Error('error.network_error');
   })
   .then((response) => parseRss(response.data.contents));
 

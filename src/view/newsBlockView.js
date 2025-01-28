@@ -1,6 +1,5 @@
 import i18next from 'i18next';
 import onChange from 'on-change';
-import modal from 'bootstrap';
 
 const visitedItemsState = onChange({}, (path, value) => {
   const itemElement = document.getElementById(path);
@@ -45,7 +44,7 @@ const updateModal = (item) => {
 const createFeedItemElement = (item) => {
   const itemElement = document.createElement('div');
   itemElement.id = item.guid;
-  itemElement.classList.add('item')
+  itemElement.classList.add('item');
 
   const itemLinkElement = document.createElement('a');
   itemLinkElement.href = item.link;
