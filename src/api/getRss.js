@@ -5,21 +5,25 @@ const DOM_PARSER = new DOMParser();
 const parseRss = (data) => {
   const dom = DOM_PARSER.parseFromString(data, 'text/xml');
 
-  const rss = dom.getElementsByTagName('rss')[0];
+  if (dom.querySelector('parsererror')) {
+    throw new Error('error.no_valid_rss');
+  }
+
+  const rss = dom.querySelector('rss');
   if (!rss) return null;
 
-  const channel = rss.getElementsByTagName('channel')[0];
+  const channel = rss.querySelector('channel');
   if (!channel) return null;
 
-  const channelTitle = channel.getElementsByTagName('title')[0].childNodes[0].nodeValue;
-  const channelDescription = channel.getElementsByTagName('description')[0].childNodes[0].nodeValue;
+  const channelTitle = channel.querySelector('title').textContent;
+  const channelDescription = channel.querySelector('description').textContent;
 
   const items = Array.from(channel.getElementsByTagName('item')).map((item) => {
-    const itemGuid = item.getElementsByTagName('guid')[0].childNodes[0].nodeValue;
-    const itemTitle = item.getElementsByTagName('title')[0].childNodes[0].nodeValue;
-    const itemDescription = item.getElementsByTagName('description')[0].childNodes[0].nodeValue;
-    const itemLink = item.getElementsByTagName('link')[0].childNodes[0].nodeValue;
-    const pubDate = Date.parse(item.getElementsByTagName('pubDate')[0].childNodes[0].nodeValue);
+    const itemGuid = item.querySelector('guid').textContent;
+    const itemTitle = item.querySelector('title').textContent;
+    const itemDescription = item.querySelector('description').textContent;
+    const itemLink = item.querySelector('link').textContent;
+    const pubDate = Date.parse(item.querySelector('pubDate').textContent);
 
     return {
       guid: itemGuid,
