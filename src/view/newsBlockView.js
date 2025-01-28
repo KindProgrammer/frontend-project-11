@@ -45,6 +45,7 @@ const updateModal = (item) => {
 const createFeedItemElement = (item) => {
   const itemElement = document.createElement('div');
   itemElement.id = item.guid;
+  itemElement.classList.add('item')
 
   const itemLinkElement = document.createElement('a');
   itemLinkElement.href = item.link;
@@ -63,10 +64,6 @@ const createFeedItemElement = (item) => {
     updateModal(item);
   });
 
-  const itemDescriptionElement = document.createElement('p');
-  itemDescriptionElement.classList.add('fw-lighter', 'fst-italic');
-  itemDescriptionElement.innerText = item.description;
-
   const itemLinkContainer = document.createElement('div');
   itemLinkContainer.classList.add('item-link-container');
 
@@ -74,7 +71,6 @@ const createFeedItemElement = (item) => {
   itemLinkContainer.appendChild(previewButton);
 
   itemElement.appendChild(itemLinkContainer);
-  itemElement.appendChild(itemDescriptionElement);
 
   return itemElement;
 };
