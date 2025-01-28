@@ -27,7 +27,7 @@ $ make develop
 
 #### How to use
 
-1. Go to the website with the application
+1. Go to the application website
 2. Enter the RSS source link
 3. press the button 'add'
 4. Enjoy
