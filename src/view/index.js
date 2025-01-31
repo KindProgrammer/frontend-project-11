@@ -1,4 +1,5 @@
-import getRss from '../api/getRss.js';
+import getRss from '../api.js';
+import parseRss from '../parse.js';
 import getValidation from '../validation.js';
 import initializeForm from './formView.js';
 import initializeNewsBlock from './newsBlockView.js';
@@ -19,10 +20,12 @@ export default (initialState, selectors) => {
     formState.isLoading = true;
 
     validation.validate({ link: inputField.value })
-      .then((result) => getRss(result.link).then((channel) => {
-        if (channel) newsState[result.link] = channel;
-        else throw new Error('error.no_valid_rss');
-      }))
+      .then((result) => getRss(result.link)
+        .then((rawRss) => { newsState[result.link] = parseRss(rawRss); })
+        .catch((e) => {
+          console.error(e);
+          throw new Error('error.no_valid_rss');
+        }))
       .then(() => {
         formState.message = { isError: false, textId: 'success' };
         inputField.value = '';

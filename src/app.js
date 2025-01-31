@@ -1,8 +1,9 @@
 import i18next from 'i18next';
 
 import ru from './lang/ru.js';
-import getRss from './api/getRss.js';
+import getRss from './api.js';
 import view from './view/index.js';
+import parseRss from './parse.js';
 
 const launchUpdatingRss = (newsState) => {
   const updateAfterDelay = (promiseChain) => {
@@ -10,16 +11,18 @@ const launchUpdatingRss = (newsState) => {
 
     setTimeout(() => {
       Object.keys(newsState).forEach((feedUrl) => {
-        newPromiseChain = newPromiseChain.then(() => getRss(feedUrl).then((newFeed) => {
-          const currItems = newsState[feedUrl].items;
-          const newItems = newFeed.items;
+        newPromiseChain = newPromiseChain.then(() => getRss(feedUrl)
+          .then((response) => parseRss(response))
+          .then((newFeed) => {
+            const currItems = newsState[feedUrl].items;
+            const newItems = newFeed.items;
 
-          newItems.forEach((newItem) => {
-            if (!currItems.some((currItem) => currItem.guid === newItem.guid)) {
-              currItems.push(newItem);
-            }
-          });
-        }))
+            newItems.forEach((newItem) => {
+              if (!currItems.some((currItem) => currItem.guid === newItem.guid)) {
+                currItems.push(newItem);
+              }
+            });
+          }))
           .catch((e) => console.error(e));
       });
 

@@ -1,19 +1,15 @@
-import axios from 'axios';
-
 const DOM_PARSER = new DOMParser();
 
 const parseRss = (data) => {
   const dom = DOM_PARSER.parseFromString(data, 'text/xml');
 
-  if (dom.querySelector('parsererror')) {
-    throw new Error('error.no_valid_rss');
+  const parseError = dom.querySelector('parsererror');
+  if (parseError) {
+    throw new Error(parseError.textContent);
   }
 
   const rss = dom.querySelector('rss');
-  if (!rss) return null;
-
   const channel = rss.querySelector('channel');
-  if (!channel) return null;
 
   const channelTitle = channel.querySelector('title').textContent;
   const channelDescription = channel.querySelector('description').textContent;
@@ -41,12 +37,4 @@ const parseRss = (data) => {
   };
 };
 
-const getRss = (url) => axios
-  .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
-  .catch((err) => {
-    console.error(err);
-    throw new Error('error.network_error');
-  })
-  .then((response) => parseRss(response.data.contents));
-
-export default getRss;
+export default parseRss;
