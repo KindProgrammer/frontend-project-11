@@ -21,10 +21,13 @@ export default (initialState, selectors) => {
 
     validation.validate({ link: inputField.value })
       .then((result) => getRss(result.link)
-        .then((rawRss) => { newsState[result.link] = parseRss(rawRss); })
-        .catch((e) => {
-          console.error(e);
-          throw new Error('error.no_valid_rss');
+        .then((rawRss) => {
+          try {
+            newsState[result.link] = parseRss(rawRss);
+          } catch (e) {
+            console.error(e);
+            throw new Error('error.no_valid_rss');
+          }
         }))
       .then(() => {
         formState.message = { isError: false, textId: 'success' };
