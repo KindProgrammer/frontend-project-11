@@ -1,47 +1,33 @@
-import getRss from '../api.js';
-import parseRss from '../parse.js';
-import getValidation from '../validation.js';
-import initializeForm from './formView.js';
-import initializeNewsBlock from './newsBlockView.js';
+import onChange from 'on-change';
+
+import { updateErrorStatus, updateFormMessage, updateIsLoading } from './formView.js';
+import { updateFeedItems, updateRssChannels } from './newsBlockView.js';
 
 export default (initialState, selectors) => {
   const form = document.getElementById(selectors.formId);
-  const formState = initializeForm(form, initialState.form);
+  const newsBlock = document.getElementById(selectors.newsBlockId);
 
-  const news = document.getElementById(selectors.newsBlockId);
-  const newsState = initializeNewsBlock(news, initialState.news);
-
-  const validation = getValidation(newsState);
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const inputField = event.target[0];
-    formState.isLoading = true;
-
-    validation.validate({ link: inputField.value })
-      .then((result) => getRss(result.link)
-        .then((rawRss) => {
-          try {
-            newsState[result.link] = parseRss(rawRss);
-          } catch (e) {
-            console.error(e);
-            throw new Error('error.no_valid_rss');
-          }
-        }))
-      .then(() => {
-        formState.message = { isError: false, textId: 'success' };
-        inputField.value = '';
-      })
-      .catch((error) => {
-        formState.message = { isError: true, textId: error.message };
-      })
-      .finally(() => {
-        formState.isLoading = false;
-      });
-
-    return false;
+  const state = onChange(initialState, (path, value) => {
+    switch (path) {
+      case 'isLoading':
+        updateIsLoading(form, value);
+        break;
+      case 'isError':
+        updateErrorStatus(form, value);
+        break;
+      case 'formMessage':
+        updateFormMessage(form, value);
+        break;
+      case 'channels':
+        updateRssChannels(newsBlock, value);
+        break;
+      case 'items':
+        updateFeedItems(value);
+        break;
+      default:
+        throw new Error(`Unknown state path ${path}`);
+    }
   });
 
-  return { form: formState, news: newsState };
+  return { form, newsBlock, state };
 };

@@ -8,13 +8,15 @@ const parseRss = (data) => {
     throw new Error(parseError.textContent);
   }
 
-  const rss = dom.querySelector('rss');
-  const channel = rss.querySelector('channel');
+  const rssElement = dom.querySelector('rss');
+  const channelElement = rssElement.querySelector('channel');
 
-  const channelTitle = channel.querySelector('title').textContent;
-  const channelDescription = channel.querySelector('description').textContent;
+  const channel = {
+    title: channelElement.querySelector('title').textContent,
+    description: channelElement.querySelector('description').textContent,
+  };
 
-  const items = Array.from(channel.getElementsByTagName('item')).map((item) => {
+  const items = Array.from(channelElement.getElementsByTagName('item')).map((item) => {
     const itemGuid = item.querySelector('guid').textContent;
     const itemTitle = item.querySelector('title').textContent;
     const itemDescription = item.querySelector('description').textContent;
@@ -30,11 +32,7 @@ const parseRss = (data) => {
     };
   });
 
-  return {
-    title: channelTitle,
-    description: channelDescription,
-    items,
-  };
+  return { channel, items };
 };
 
 export default parseRss;
